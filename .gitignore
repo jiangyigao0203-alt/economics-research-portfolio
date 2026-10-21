@@ -51,3 +51,16 @@ gsadf_result/
 *.key
 .DS_Store
 Thumbs.db
+
+# Native builds and simulation runs stay local.
+build/
+outputs/
+*.exe
+*.obj
+*.o
+*.dll
+*.pdb
+*.lib
+*.a
+*.so
+*.dylib

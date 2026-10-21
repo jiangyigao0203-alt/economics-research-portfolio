@@ -1,3 +1,11 @@
+"""Build a monthly Compustat panel from quarterly accounting and security data.
+
+Download the configured firm/year sample through an authenticated WRDS session,
+expand quarterly observations to months, and merge monthly security information.
+The resulting CSV is an input to the equity-duration and CRSP-price workflows.
+Run from the 525 directory; data access requires the reader's WRDS credentials.
+"""
+
 from pathlib import Path
 
 import pandas as pd

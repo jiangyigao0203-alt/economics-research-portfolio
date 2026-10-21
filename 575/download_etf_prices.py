@@ -1,3 +1,11 @@
+"""Download daily ETF price histories for the configured ticker universe.
+
+Use yfinance over the fixed sample dates below, flatten returned column labels,
+and write one CSV per ticker into dataset/ relative to the working directory.
+Crypto and exchange-rate inputs require separate acquisition. Run from the
+575 directory. Downloads start on import and require network access.
+"""
+
 import logging
 from pathlib import Path
 

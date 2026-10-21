@@ -1,3 +1,12 @@
+"""Compute a backward supremum ADF statistic for each admissible endpoint.
+
+Read a dated positive-valued series, log-transform the target, and distribute
+recursive regressions over worker processes. ADF_LAGS controls lagged difference
+terms. This standalone script exports statistics without Monte Carlo calibration
+or final bubble labels; the C++ pipeline supplies a separate calibrated workflow.
+Input paths are relative to this file. Review settings before running.
+"""
+
 import multiprocessing
 import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -17,7 +26,7 @@ ADF_LAGS = 2
 MIN_WINDOW_RULE = "psy"
 
 # Number of CPU cores to use. Defaults to all available cores.
-# Change to a specific number (e.g., 4) if you want to leave cores free for other tasks.
+# A smaller worker count leaves CPU capacity available for other tasks.
 NUM_CORES = multiprocessing.cpu_count()
 
 # ============================================================
@@ -53,6 +62,7 @@ def prepare_daily_data(input_file: str | Path) -> pd.DataFrame:
     return df
 
 def get_min_window(T: int) -> int:
+    """Convert the PSY sample-length rule into a minimum window measured in observations."""
     r0 = 0.01 + 1.8 / np.sqrt(T)
     return max(10, int(np.floor(r0 * T)))
 
@@ -122,6 +132,7 @@ def worker_task(args):
 # MULTICORE COORDINATOR
 # ============================================================
 def compute_bsadf_multicore(y: np.ndarray, min_window: int, lags: int) -> np.ndarray:
+    """Compute endpoint-wise maximum ADF statistics by distributing endpoints across processes."""
     T = len(y)
     bsadf = np.full(T, np.nan)
     

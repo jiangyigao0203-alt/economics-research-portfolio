@@ -1,3 +1,12 @@
+"""Estimate firm-level abnormal returns around FOMC events.
+
+Inputs are shock-event timestamps, matched CRSP prices, and market/risk-free
+returns; filenames and event-window settings are defined below. Firm market
+models use observations between consecutive events and forecast subsequent
+returns. Outputs include event-level return estimates and a partial checkpoint.
+Run from the 525 directory. This script executes its workflow on import.
+"""
+
 import logging
 import time
 
@@ -60,6 +69,7 @@ def pick_first_existing(columns, candidates, label):
 
 
 def safe_log_return(price_series: pd.Series) -> pd.Series:
+    """Compute consecutive log-price differences while preserving the input index."""
     price_series = pd.to_numeric(price_series, errors="coerce")
     return pd.Series(np.log((price_series / price_series.shift(1)).to_numpy(dtype=float)),
                      index=price_series.index, name=price_series.name)
@@ -100,7 +110,7 @@ market = market.dropna(subset=[MARKET_DATE_COL, MARKET_RET_COL, RF_COL]).copy()
 
 prices[PRICE_GVKEY_COL] = prices[PRICE_GVKEY_COL].astype(str).str.zfill(6)
 
-# IMPORTANT UPDATE:
+# EVENT-DATE ALIGNMENT:
 # the new FOMC file has intraday timestamps (e.g. 1990-02-08 11:30), while
 # CRSP daily prices are date-level. Normalize both to calendar dates so that
 # same-day observations are matched on the trading date.

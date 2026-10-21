@@ -1,3 +1,11 @@
+"""Download CRSP daily prices matched to the Compustat firm sample.
+
+Read the monthly Compustat panel, obtain CCM links through WRDS, and download
+prices in batches over the configured dates. The output is a firm-date price
+panel. Authorized WRDS/CRSP access is required; data are not bundled here.
+Run from the 525 directory. Importing this script starts the download workflow.
+"""
+
 import math
 import time
 
@@ -15,7 +23,7 @@ END_DATE   = "2025-12-31"
 
 GVKEY_COL = "gvkey"
 
-# Optional: if your file has company name, keep it
+# Preserve company names when the input panel contains them.
 NAME_COL_CANDIDATES = ["conm", "company_name", "name"]
 
 # Batch size for CRSP download
@@ -125,7 +133,7 @@ ccm["linkdt"] = pd.to_datetime(ccm["linkdt"])
 ccm["linkenddt"] = pd.to_datetime(ccm["linkenddt"])
 ccm["linkenddt"] = ccm["linkenddt"].fillna(pd.Timestamp("2099-12-31"))
 
-# Restrict to your sample window
+# Restrict links to the configured sample window.
 ccm = ccm[
     (ccm["linkenddt"] >= pd.Timestamp(START_DATE)) &
     (ccm["linkdt"] <= pd.Timestamp(END_DATE))

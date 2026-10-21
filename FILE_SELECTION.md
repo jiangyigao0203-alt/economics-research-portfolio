@@ -1,26 +1,23 @@
 # File selection
 
-This portfolio includes the main data-preparation and estimation scripts and a small set of aggregate results. Original files remain in the author's local workspace. Filenames and contents were inspected; a larger suffix or newer timestamp alone was not treated as proof that a script superseded another.
+The portfolio includes research source, documentation, and a small set of aggregate results. Original workspace files and the supplied archive are preserved. Source names are mapped in [SOURCE_MANIFEST.md](SOURCE_MANIFEST.md).
 
 ## 525
 
-- Keep the monthly Compustat workflow, CRSP/market downloads, shock decomposition, `impliedduration.py`, diagnostics, event-return calculation, beta estimation, and configurable `panel.py`.
-- Omit `getdatawrds.py`: annual-data branch outside the selected monthly workflow.
-- Omit `binned_panel.py` and `TravisPlayground.py`: alternate panel implementations; `panel.py` exposes the selected model options.
-- Omit `mothlyduration.py`: alternative duration implementation. The included `impliedduration.py` supports the optional NYSE microcap exclusion; the two implementations have different assumptions and are not interchangeable.
-- Omit `Impliedduration_remove_negatives.py`: ad hoc filtering of a separate file outside the selected workflow.
-- Omit `visualize.py` and helpers embedded in output folders: duplicate presentation utilities. Keep the root `increase_test.py` as the compact coefficient-pattern analysis.
-- Keep only four aggregate tables from `panel_outputs_model_selectable`; omit firm-level panels, residuals, previews, logs, and redundant export formats.
+Keep the monthly Compustat workflow, CRSP/market downloads, shock decomposition, implied-duration estimation, diagnostics, event-return calculation, beta estimation, configurable panel model, and coefficient trend check. Exclude the annual-data branch (`getdatawrds.py`), alternate panel implementations (`binned_panel.py`, `TravisPlayground.py`), alternative duration implementation (`mothlyduration.py`), ad hoc negative-duration filtering, and duplicate presentation helpers.
 
-## 575
+Keep four aggregate tables from the selected panel-output folder. Exclude firm-level panels, residuals, previews, logs, and redundant export formats. Different historical duration implementations have different assumptions; exclusion does not establish numerical equivalence.
 
-- Keep `BSADF.py`, `start.py`, `arch2.py`, `model.py`, the three distinct MLE stages/experiments, and the ETF downloader.
-- Omit `plot_all.py`: alternate lagged interval-union experiment; keep `start.py` as the selected zero-lag variant without implying equivalence across lag specifications.
-- Omit `arch.py`: standalone GARCH plotting overlaps with `arch2.py` and estimation in the main models.
-- Omit `Monte-Carlo.py` and `Plot.py`: separate calibration/simulation experiments with disconnected defaults; `start.py` includes its own calibration. This does not complete calibration for the standalone `BSADF.py` workflow.
-- Omit `getSP.py` and `get_PE_PD.py`: valuation-data preparation branch outside the selected cross-market focus. `BSADF.py` retains a configurable valuation-series default, which must be supplied or changed.
-- Omit `market_type.py`, `gsadf_summary.py`, and `visualize.py`: metadata editing and standalone presentation helpers outside the selected estimation workflow.
-- Omit `prob.py`: unrelated coin-toss calculation.
-- Replace the unlinked historical GSADF summary with one identified intensity-regression run's coefficients and model summary. Omit other historical runs, observation-level datasets, prediction dumps, and bulk charts.
+## 575: Python
 
-These decisions curate an admissions code sample. They do not certify that each included file generated the archived outputs or that every excluded experiment is obsolete.
+Keep the standalone BSADF calculation, zero-lag interval-union experiment, GARCH visualization, episode model, feature builder, two distinct classifier experiments, and ETF downloader. Exclude the alternate lagged union experiment (`plot_all.py`), earlier GARCH plot (`arch.py`), disconnected standalone calibration/simulation experiments (`Monte-Carlo.py`, `Plot.py`), valuation-data download branch, metadata/presentation helpers, and unrelated coin-toss helper (`prob.py`).
+
+Retain one identified intensity-regression run's coefficients and model summary. Exclude bulk charts, prediction dumps, observation-level datasets, and the previously unlinked GSADF summary.
+
+## 575: C++ archive
+
+Keep `ultimateADF.cpp` as `cpp/multi_market_bsadf_gsadf.cpp`: the combined multi-market BSADF/GSADF workflow supports configurable lag lists and includes its own calibration. Keep `monte_carlo.cpp` as `cpp/bsadf_monte_carlo_lag0.cpp`: a distinct zero-lag simulator configured for a larger 10,000-path run.
+
+Exclude the overlapping single-purpose programs `bsadf.cpp`, `multi_market_bsadf.cpp`, and `multi_market_gsadf.cpp`; exclude `main.cpp`, which is a counting benchmark. Exclude every `.exe`, editor-specific settings, raw-data directory, and generated result tree. The published CMake build uses standard threads and optional OpenMP rather than machine-specific compiler paths or unused Eigen flags.
+
+Selection is based on purpose and overlapping functionality, not a claim that every excluded experiment is obsolete. New C++ sources have not been established as the source of the archived Python regression outputs.

@@ -11,3 +11,5 @@ This repository shares source code and selected aggregate statistical outputs. I
 Do not add WRDS credentials, `.pgpass`, `.env`, passwords, or access tokens. Raw inputs and generated panels remain local. The `.gitignore` permits only the explicitly selected result CSV files; adding a future dataset requires a deliberate change.
 
 Data-source URLs, scholarly references, and the exact configurations underlying historical outputs still need to be completed by the author. No license is assigned to third-party datasets by publishing this code.
+
+The supplied C++ archive contributes source only. Raw price CSVs and simulation-output trees from that archive are not redistributed. See `575/cpp/README.md` for input layout and output schemas.

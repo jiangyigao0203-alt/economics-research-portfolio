@@ -1,8 +1,11 @@
-"""
-Multi-Seed Stability Runner
-===========================
-Edit the CONFIG block at the top, then just run:
-    python multi_seed_runner.py
+"""Evaluate logistic bubble classification with repeated held-out market series.
+
+Read the panel created by build_bubble_volatility_panel.py. For each seed, hold
+out whole series within each market type and standardize continuous features
+using training-sample statistics. Fit a stabilized IRLS logistic model and
+select classification thresholds using the training data. Report train/test
+metrics across seeds. This is a cross-series split, not a chronological split.
+Review INPUT_PANEL_FILE before running; the experiment executes on import.
 """
 
 from __future__ import annotations
@@ -20,7 +23,7 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 
 # =========================================================
-# CONFIG  ← only edit this block
+# EXPERIMENT CONFIGURATION
 # =========================================================
 
 INPUT_PANEL_FILE = Path(__file__).resolve().parent / 'dataset_build_outputs' / '111' / 'panel_dataset_full.csv'
@@ -57,6 +60,7 @@ def sigmoid(z):
     return 1.0 / (1.0 + np.exp(-np.clip(z, -700, 700)))
 
 def normalize_target(s):
+    """Map supported boolean/string bubble labels to a binary numeric target."""
     if s.dtype == bool:
         return s.fillna(False).astype(int)
     return (
@@ -66,6 +70,7 @@ def normalize_target(s):
     )
 
 def compute_f1(y_true, y_hat):
+    """Compute the harmonic mean of precision and recall, handling empty positive predictions."""
     y, h  = np.asarray(y_true, int), np.asarray(y_hat, int)
     tp = int(((y == 1) & (h == 1)).sum())
     fp = int(((y == 0) & (h == 1)).sum())
@@ -111,6 +116,10 @@ def load_data():
 
 
 def split_data(df, x_cols, seed):
+    """Hold out entire series within each market type using the supplied seed.
+
+    No series appears in both subsets. Scale the volatility feature with training
+    means and standard deviations only; this does not impose a temporal holdout."""
     rng = np.random.default_rng(seed)
     train_parts, test_parts = [], []
 
@@ -149,6 +158,7 @@ def split_data(df, x_cols, seed):
 # =========================================================
 
 def fit_irls(X, y):
+    """Fit logistic coefficients with a stabilized iteratively reweighted least-squares update."""
     k, beta = X.shape[1], np.zeros(X.shape[1])
     for _ in range(MAX_ITER):
         p    = np.clip(sigmoid(X @ beta), 1e-8, 1 - 1e-8)
@@ -165,6 +175,7 @@ def fit_irls(X, y):
 
 
 def find_best_threshold(y, p, vol):
+    """Search the configured volatility-dependent threshold grid using training-sample F1."""
     best_f1, best_g0, best_g1 = -np.inf, 0.0, 0.0
 
     def search(g0s, g1s):
@@ -196,6 +207,7 @@ def find_best_threshold(y, p, vol):
 # =========================================================
 
 def run_one_seed(df, x_cols, seed):
+    """Fit and evaluate one series-holdout split and return its performance record."""
     try:
         train, test = split_data(df, x_cols, seed)
         if train.empty or test.empty:

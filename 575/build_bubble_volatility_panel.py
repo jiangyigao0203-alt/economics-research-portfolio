@@ -1,3 +1,12 @@
+"""Build an observation-level classification panel from bubble-test outputs.
+
+Read calibrated BSADF result files with date, logged price, and is_bubble.
+Estimate series-level GARCH volatility, construct lagged features and bubble
+indicators, and export a panel plus data-quality summaries. This stage prepares
+features; it does not fit the downstream logistic classifier. Review input
+folders and frequency-dependent annualization before running.
+"""
+
 import json
 import logging
 import time
@@ -140,6 +149,7 @@ def garch_filter(params, returns):
 
 
 def garch_log_likelihood(params, returns):
+    """Return the Gaussian GARCH negative log-likelihood used by numerical minimization."""
     omega, alpha, beta = params
 
     if omega <= 1e-8 or alpha < 0 or beta < 0 or (alpha + beta) >= 0.999:
@@ -255,6 +265,7 @@ def list_csv_files(folder: Path):
 # PER-FILE DATASET CONSTRUCTION
 # =========================================================
 def process_file(file_path, configured_market_type):
+    """Read one calibrated series, estimate GARCH variance, and construct aligned panel features and diagnostics."""
     file_start = time.time()
     log(f"Processing file start: {file_path}")
 
@@ -420,6 +431,7 @@ def process_file(file_path, configured_market_type):
 # BUILD POOLED PANEL DATASET
 # =========================================================
 def build_panel_dataset(input_folders):
+    """Combine usable per-series observations into the classifier feature panel."""
     all_rows = []
     file_level_status_rows = []
 
@@ -490,6 +502,7 @@ def build_panel_dataset(input_folders):
 # PANEL CLEANUP / FINAL COLUMN SELECTION
 # =========================================================
 def finalize_panel_dataset(panel_df):
+    """Select the exported feature columns and sort observations by series and date."""
     keep_cols = [
         DATE_COL,
         "series_name",
