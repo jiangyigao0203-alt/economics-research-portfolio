@@ -1,14 +1,16 @@
 # Verification notes
 
-Packaging checks:
+The initial publication contained 18 Python scripts and selected aggregate outputs. This revision renames/documents those scripts and adds two selected C++ programs and CMake instructions.
 
-- All 18 included Python files parsed successfully with Python's AST parser.
-- Included source files match their original local files byte for byte; SHA-256 hashes are recorded in SOURCE_MANIFEST.md.
-- Five selected aggregate CSV files parsed successfully and contain data rows; the regression-summary text file was inspected.
-- A scan for common hard-coded password, token, and private-key patterns found no matches. This is a limited pattern check, not a security guarantee.
-- Original project folders were left untouched.
-- All 34 published files were fetched from GitHub and matched against the selected local files byte for byte.
+## Checks performed
 
-The full empirical pipelines, dependency installation, data downloads, numerical estimates, statistical assumptions, and exact correspondence between code and saved outputs were not validated. No claim of successful replication is made.
+- All 18 Python files parse successfully. After removing module/function/class docstrings, each syntax tree matches its pre-edit source. Comments and filenames do not change that comparison.
+- C++ token comparisons preserve executable source except the combined program's two documented input/output path-default substitutions. Comments and whitespace are excluded from that comparison.
+- The five selected aggregate CSVs parse and contain rows; the regression-summary text was inspected. Historical result files were not changed by the readability revision.
+- The source manifest records published names, original sources, and updated hashes.
+- Common hard-coded credential patterns were checked. A pattern scan is a limited check, not a security guarantee.
+- Original workspace files and the supplied ZIP archive were left untouched.
 
-- File selection was reviewed to omit duplicate implementations, disconnected helpers, bulky outputs, and unrelated code; see FILE_SELECTION.md.
+## Limits
+
+A C++ compiler and CMake were not available on the command path, so this revision does not claim successful compilation, a simulation smoke run, or a full Monte Carlo run. The Python empirical pipelines, dependency installation, data downloads, estimates, and statistical assumptions were not revalidated. Code/source comparisons do not prove that historical results are reproducible. The relationship between the newly supplied C++ version and the historical archived labels remains unverified.
