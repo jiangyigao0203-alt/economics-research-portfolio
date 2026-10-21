@@ -1,3 +1,12 @@
+"""Run the zero-lag Bitcoin interval-union bubble-detection experiment.
+
+Simulate random walks to calibrate the maximum ADF statistic across admissible
+intervals, then mark the union of real-data intervals exceeding that threshold.
+This procedure differs from endpoint-specific BSADF date-stamping. It expects
+cryptos/btc-usd-max.csv, creates timestamped CSV/plot outputs, and can use all
+CPU cores. Monte Carlo count, random seed, and plotting are configured below.
+"""
+
 import math
 import multiprocessing
 import time
@@ -64,6 +73,7 @@ def print_step(msg: str):
 
 
 def overlay_bubble_segments(ax, x, y, is_bubble, linewidth=2.2):
+    """Highlight contiguous bubble-labelled segments without joining separated episodes."""
     if len(y) < 2:
         return
 
@@ -114,6 +124,7 @@ def prepare_daily_data(input_file: str | Path) -> pd.DataFrame:
 
 
 def get_min_window(T: int) -> int:
+    """Convert the PSY sample-length rule into a minimum window measured in observations."""
     r0 = 0.01 + 1.8 / np.sqrt(T)
     return max(10, int(np.floor(r0 * T)))
 
@@ -392,6 +403,7 @@ def compute_union_detection_multicore(
     min_window: int,
     cv: float
 ):
+    """Mark observations belonging to any interval whose zero-lag ADF statistic exceeds the calibrated threshold."""
     T = len(y)
     all_endpoints = list(range(min_window - 1, T))
     n_endpoints = len(all_endpoints)
@@ -467,6 +479,7 @@ def plot_detection_result(
     output_file: Path,
     show_plot: bool = True
 ):
+    """Plot the input series and interval-union labels, then save the configured figure."""
     x = df["date"].to_numpy()
     log_price = df["log_price"].to_numpy()
     endpoint_max_adf = df["endpoint_max_adf"].to_numpy()

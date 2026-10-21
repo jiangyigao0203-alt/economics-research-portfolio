@@ -1,37 +1,36 @@
 # 575: Financial bubbles and volatility
 
-This project studies explosive price episodes and their relationship with volatility across cryptocurrencies, ETFs, and exchange rates.
+This project combines C++ simulation and bubble-test programs with Python volatility estimation, episode regressions, and classifier experiments.
 
-## Code map
+## Workflow and code map
 
-| File | Purpose |
-| --- | --- |
-| `get_etfs.py` | Download ETF price histories |
-| `BSADF.py` | Compute recursive backward supremum ADF statistics with configurable lags |
-| `start.py` | Self-contained Bitcoin experiment with zero-lag interval-union detection, Monte Carlo calibration, and a plot |
-| `arch2.py` | Estimate GARCH volatility and overlay bubble detections |
-| `model.py` | Regress bubble-episode duration or intensity on volatility and market-type controls |
-| `MLE1.py` | Build a panel with GARCH volatility features from precomputed BSADF outputs |
-| `MLE2.py` | Multi-seed logistic classification and threshold experiments |
-| `MLE3.py` | Time-split classifier control using a random-noise feature |
+| Stage | File | Purpose |
+| --- | --- | --- |
+| Price acquisition | `download_etf_prices.py` | Download daily ETF histories; crypto and exchange-rate inputs are supplied separately |
+| Calibrated multi-market tests | [cpp/multi_market_bsadf_gsadf.cpp](cpp/multi_market_bsadf_gsadf.cpp) | Simulate null distributions, compute BSADF paths and GSADF tests, and export filtered bubble labels for each configured lag |
+| Dedicated large calibration | [cpp/bsadf_monte_carlo_lag0.cpp](cpp/bsadf_monte_carlo_lag0.cpp) | Simulate endpoint-specific zero-lag BSADF critical values; defaults use 10,000 null paths |
+| Standalone statistic | `compute_bsadf.py` | Compute endpoint BSADF statistics without calibration or final labels |
+| Alternative detection experiment | `detect_bubbles_interval_union.py` | Calibrate a maximum-over-intervals zero-lag statistic and flag the union of exceeding intervals |
+| Volatility plot | `plot_bubbles_and_garch_volatility.py` | Estimate GARCH(1,1) variance and plot it alongside bubble labels |
+| Episode analysis | `regress_bubble_episode_characteristics.py` | Regress episode duration or intensity on volatility and market-type controls |
+| Classifier features | `build_bubble_volatility_panel.py` | Construct a dated panel of labels and GARCH volatility features |
+| Series holdout | `evaluate_classifier_series_holdout.py` | Repeat logistic classification while holding out entire series within market type |
+| Noise control | `evaluate_classifier_noise_control.py` | Split each series chronologically and replace volatility with seeded random noise |
 
-The two detection scripts serve different purposes: `BSADF.py` produces endpoint statistics; `start.py` implements an interval-union experiment. Their outputs are not interchangeable. Earlier standalone Monte Carlo, duplicate plotting, valuation-data, and summary helpers are omitted; see [selection notes](../FILE_SELECTION.md).
+See the [C++ build and data-interface guide](cpp/README.md) for detailed simulation instructions, expected schemas, calibration settings, and output meanings. The three detection approaches have different thresholds and labels; they are not interchangeable.
 
-## Selected saved result
+## Running the analysis
 
-The [results folder](results/) contains an intensity-regression coefficient table and its model summary from local run `run_20260412_071631` (April 12, 2026). It uses 1,411 bubble episodes, pre-bubble volatility, market-type controls, and HC1 covariance; the archived R-squared is approximately 0.262. These are historical outputs, not newly reproduced estimates or causal evidence.
+1. Install the root Python requirements. For the simulation programs, build the C++ sources using their CMake instructions.
+2. Supply positive-price CSVs under `575/data/markets/ETFS`, `ExchangeRate`, and `crypto`. The combined C++ program reads the first two columns as date and price, logs prices, and processes its configured lag list. Execute it from `575/cpp` so its relative defaults resolve correctly.
+3. Select exactly one lag specification per Python analysis. Configure separate input folders in the episode-regression and feature-builder scripts with the matching BSADF files. These files contain the required `date`, logged `price`, and `is_bubble`. Do not duplicate a series by mixing lag variants.
+4. The feature builder creates a timestamped panel under `dataset_build_outputs`. Point both classifier scripts' `INPUT_PANEL_FILE` at the actual generated panel; their retained defaults still contain the historical `111` directory.
+5. The series-holdout experiment tests transfer across market series, not a chronological forecasting split. The chronological noise experiment is a diagnostic control. Neither design establishes real-time predictability of retrospective bubble labels; examine label construction, feature estimation, and temporal leakage before making a predictive claim.
 
-The saved configuration records intensity as the dependent variable, logged prices, annualized volatility, market-type controls, no year dummies, and a minimum episode duration of five observations. Those options agree with the packaged `model.py` settings; the exact source version and source-data snapshot used in that historical run are not established.
+Other retained defaults are documented in each script. `compute_bsadf.py` expects `daily_pe.csv`, and its output filename says `1lag` even though `ADF_LAGS` is 2; use the configured setting to identify the specification. The interval-union experiment expects `cryptos/btc-usd-max.csv`. The volatility plot expects a merged `detection.csv` with `date`, `price`, `bsadf`, `critical_value`, and `is_bubble`. Renaming and documentation have not silently reconciled these separate experiment inputs.
 
-## Reproduction guide and current gaps
+## Selected historical result
 
-1. Install the root requirements and change into `575`.
-2. `get_etfs.py` writes ETF data into `dataset/`. Crypto and exchange-rate inputs must be supplied separately from their original sources; source citations and redistribution permissions remain to be completed.
-3. For `BSADF.py`, supply `daily_pe.csv` in its expected schema or explicitly configure another input. The default output name contains `1lag`, but `ADF_LAGS` is currently 2; use the setting rather than the filename to identify the specification. This script alone does not calibrate critical values or produce final bubble labels.
-4. `start.py` expects `cryptos/btc-usd-max.csv`. Review `prepare_daily_data`, the log-price setting, Monte Carlo settings, and CPU usage. It creates a timestamped output folder and may require substantial runtime. Its interval-union labels are not the `is_bubble` labels expected by the downstream BSADF-based analyses.
-5. For `model.py` and `MLE1.py`, configure the input folders `ETFs_BSADF`, `Exchange_Rate_BSADF`, and `cryptos_BSADF`. These are not bundled. CSVs need `date`, `price`, and `is_bubble`; current configuration treats price as already logged. The calibration and label-construction procedure for those historical files must be established before full replication.
-6. `MLE1.py` builds a panel under `dataset_build_outputs`, whereas `MLE2.py` and `MLE3.py` currently read `dataset_build_outputs/111/panel_dataset_full.csv`. Point the classifiers to the actual generated panel.
-7. `MLE2.py` is a random-split stability experiment. `MLE3.py` is a time-split random-noise control, not the main predictive model. Examine temporal leakage, threshold selection, and class balance before interpreting predictive performance.
-8. `arch2.py` expects a separately prepared `detection.csv` with `date`, `price`, `bsadf`, `critical_value`, and `is_bubble`; the current scripts do not automatically generate that exact merged file.
+The [results folder](results/) contains the intensity-regression coefficients and model summary from local run `run_20260412_071631` (April 12, 2026): 1,411 bubble episodes, pre-bubble volatility, market-type controls, HC1 covariance, and R-squared approximately 0.262. They are historical outputs rather than newly replicated estimates or causal evidence. The exact source version and source-data snapshot underlying that run remain unverified, including whether the newly supplied C++ source generated its labels.
 
-The repository is a selected code sample with documented manual steps. The historical empirical pipeline has not been rerun.
+Raw datasets, compiled executables, and large generated outputs are excluded. Source citations, input access, and full empirical replication still require work. [Selection notes](../FILE_SELECTION.md) explain which files were kept and omitted.

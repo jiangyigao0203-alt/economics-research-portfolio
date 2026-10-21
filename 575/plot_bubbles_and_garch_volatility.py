@@ -1,3 +1,12 @@
+"""Plot bubble detections alongside manually estimated GARCH(1,1) volatility.
+
+Read detection.csv containing date, price, bsadf, critical_value, and is_bubble.
+Estimate conditional variance from price returns and plot prices, test
+statistics, and volatility with bubble overlays. Review annualization settings
+for the market's observation frequency. Run from the 575 directory.
+Estimation, file output, and plotting execute on import.
+"""
+
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -8,7 +17,7 @@ from scipy.optimize import minimize
 # =========================================================
 # SETTINGS
 # =========================================================
-INPUT_FILE = Path("detection.csv")   # your merged detection file
+INPUT_FILE = Path("detection.csv")   # Merged detection statistics and bubble labels.
 OUTPUT_PLOT_FILE = Path("bubble_with_garch_vol.png")
 
 DATE_COL = "date"
@@ -53,6 +62,7 @@ def garch_filter(params, returns):
 
 
 def garch_log_likelihood(params, returns):
+    """Return the Gaussian GARCH negative log-likelihood used by numerical minimization."""
     omega, alpha, beta = params
 
     # parameter restrictions
@@ -76,6 +86,7 @@ def garch_log_likelihood(params, returns):
 # BUBBLE OVERLAY HELPER
 # =========================================================
 def overlay_bubble_segments(ax, x, y, is_bubble, linewidth=2.2, color="red"):
+    """Highlight contiguous bubble-labelled segments without joining separated episodes."""
     if len(y) < 2:
         return
 

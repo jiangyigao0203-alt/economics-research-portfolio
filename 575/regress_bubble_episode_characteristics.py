@@ -1,3 +1,12 @@
+"""Regress bubble-episode duration or intensity on volatility and controls.
+
+Read calibrated BSADF result CSVs with date, logged price, and is_bubble.
+Estimate GARCH volatility by series, identify contiguous bubble episodes, and
+build episode-level outcomes and regressors. DEPENDENT_VARIABLE selects the
+outcome; optional market-type/year controls are configured below. OLS uses HC1
+covariance. Save estimates and diagnostics in a timestamped run directory.
+"""
+
 import logging
 from datetime import UTC, datetime
 from pathlib import Path
@@ -12,7 +21,7 @@ from scipy.optimize import minimize
 # =========================================================
 
 # Three configurable folders. Each folder should contain BSADF result CSV files.
-# If your CSVs are inside nested subfolders, leave SEARCH_RECURSIVELY = True.
+# SEARCH_RECURSIVELY includes result files in nested input directories.
 INPUT_FOLDERS = {
     "ETF": Path(__file__).resolve().parent / 'ETFs_BSADF',
     "ExchangeRate": Path(__file__).resolve().parent / 'Exchange_Rate_BSADF',
@@ -133,6 +142,7 @@ def garch_filter(params, returns):
 
 
 def garch_log_likelihood(params, returns):
+    """Return the Gaussian GARCH negative log-likelihood used by numerical minimization."""
     omega, alpha, beta = params
 
     if omega <= 1e-8 or alpha < 0 or beta < 0 or (alpha + beta) >= 0.999:
@@ -199,6 +209,7 @@ def normalize_bool_series(series):
 
 
 def identify_bubble_periods(df, bubble_col):
+    """Identify contiguous runs of true bubble indicators in chronological order."""
     bubble = normalize_bool_series(df[bubble_col])
 
     if bubble.empty or not bubble.any():
@@ -253,6 +264,7 @@ def list_csv_files(folder: Path):
 # PER-FILE PROCESSING
 # =========================================================
 def process_file(file_path, configured_market_type):
+    """Read one calibrated series, estimate GARCH variance, and summarize its contiguous bubble episodes."""
     print(f"\nProcessing file: {file_path}")
 
     df = pd.read_csv(file_path)
@@ -420,6 +432,7 @@ def process_file(file_path, configured_market_type):
 # BUILD POOLED REGRESSION DATASET
 # =========================================================
 def build_regression_dataset(input_folders):
+    """Combine per-series episode records and file-processing diagnostics."""
     all_bubbles = []
     file_level_status_rows = []
 
@@ -497,6 +510,7 @@ def get_dependent_variable_column():
 
 
 def prepare_design_matrix(df):
+    """Select the episode outcome and configured regressors, add controls, and remove incomplete rows."""
     y_col = get_dependent_variable_column()
     work = df.copy()
 
@@ -552,6 +566,7 @@ def prepare_design_matrix(df):
 # REGRESSION
 # =========================================================
 def run_regression(model_df, y_col, x_cols):
+    """Fit episode-level OLS with HC1 covariance and append fitted values and residuals."""
     y = model_df[y_col].astype(float)
     X = sm.add_constant(model_df[x_cols].astype(float), has_constant="add")
 

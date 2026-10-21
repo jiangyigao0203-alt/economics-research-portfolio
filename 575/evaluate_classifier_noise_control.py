@@ -1,16 +1,10 @@
-"""
-Single-Run Time-Split Sanity Check
-==================================
-Changes relative to the multi-seed runner:
-1. No loop over random seeds
-2. Split is back to TIME SPLIT within each series
-3. Replace lagged volatility with random noise
-4. Keep market-type dummies optional
-5. Keep the same logit + threshold-search structure
-6. Add probability-distribution plots for the TEST set
+"""Run a chronological classifier control with a random-noise feature.
 
-Run:
-    python single_run_time_split_random_noise.py
+Read the bubble/volatility panel, split each series by time, and replace the
+volatility feature with seeded random noise. Fit the logistic/threshold model
+and export performance metrics and test-probability plots. This is a diagnostic
+control rather than the main volatility-based predictive specification.
+Review INPUT_PANEL_FILE and output paths before running.
 """
 
 from __future__ import annotations
@@ -75,6 +69,7 @@ def sigmoid(z):
 
 
 def normalize_target(s):
+    """Map supported boolean/string bubble labels to a binary numeric target."""
     if s.dtype == bool:
         return s.fillna(False).astype(int)
     return (
@@ -96,6 +91,7 @@ def compute_auc(y_true, p_pred):
 
 
 def compute_f1(y_true, y_hat):
+    """Compute the harmonic mean of precision and recall, handling empty positive predictions."""
     y = np.asarray(y_true, int)
     h = np.asarray(y_hat, int)
     tp = int(((y == 1) & (h == 1)).sum())
@@ -276,6 +272,7 @@ def load_data():
 
 
 def time_split_by_series(df):
+    """Split each series chronologically and standardize features using training observations."""
     train_parts, test_parts = [], []
 
     for _, g in df.groupby(SERIES_COL, sort=False):
@@ -310,6 +307,7 @@ def time_split_by_series(df):
 # =========================================================
 
 def fit_irls(X, y):
+    """Fit logistic coefficients with a stabilized iteratively reweighted least-squares update."""
     k = X.shape[1]
     beta = np.zeros(k)
     for _ in range(MAX_ITER):
@@ -327,6 +325,7 @@ def fit_irls(X, y):
 
 
 def find_best_threshold(y, p, noise_feature):
+    """Select the configured threshold parameters using training-sample F1 for the noise control."""
     best_f1, best_g0, best_g1 = -np.inf, 0.0, 0.0
 
     def search(g0s, g1s):
