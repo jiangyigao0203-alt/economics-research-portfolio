@@ -1,4 +1,2 @@
-* text=auto
-*.py text eol=lf
-*.md text eol=lf
-*.csv text eol=lf
+# Preserve source bytes and the recorded snapshot hashes.
+* -text

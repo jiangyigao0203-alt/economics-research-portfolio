@@ -4,9 +4,10 @@ Packaging checks:
 
 - All 18 included Python files parsed successfully with Python's AST parser.
 - Included source files match their original local files byte for byte; SHA-256 hashes are recorded in SOURCE_MANIFEST.md.
-- Five selected aggregate CSV files and one regression-summary text file parsed successfully and contain data rows.
+- Five selected aggregate CSV files parsed successfully and contain data rows; the regression-summary text file was inspected.
 - A scan for common hard-coded password, token, and private-key patterns found no matches. This is a limited pattern check, not a security guarantee.
 - Original project folders were left untouched.
+- All 34 published files were fetched from GitHub and matched against the selected local files byte for byte.
 
 The full empirical pipelines, dependency installation, data downloads, numerical estimates, statistical assumptions, and exact correspondence between code and saved outputs were not validated. No claim of successful replication is made.
 
