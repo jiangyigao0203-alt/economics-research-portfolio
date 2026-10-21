@@ -1,3 +1,11 @@
+"""Estimate asset market betas from matched daily return observations.
+
+Read the configured firm-price and market/risk-free CSV inputs, construct
+returns, and estimate covariance-to-variance slopes by firm. Export beta
+estimates and sample-quality diagnostics. Run from the 525 directory.
+The calculation and CSV exports execute on import.
+"""
+
 import logging
 
 import numpy as np
@@ -9,7 +17,7 @@ import pandas as pd
 FILE_MARKET = "market_rf_daily.csv"
 FILE_PRICE  = "gvkey_crsp_daily_price_matched.csv"
 
-ID_COL = "gvkey"   # or "permno" if you prefer
+ID_COL = "gvkey"   # Alternative identifier: "permno".
 MIN_OBS = 30       # minimum observations required for beta
 
 # =========================
@@ -67,6 +75,7 @@ print(f"Total merged rows: {len(df):,}")
 print("\nSTEP 4: Computing betas...")
 
 def compute_beta(group):
+    """Return the covariance-to-market-variance slope, observation count, and validity flag for one firm."""
     Ri = group["stock_return"]
     Rm = group["market_excess"]
 
@@ -171,7 +180,7 @@ print("Saved full diagnostics to: asset_betas_diagnostics.csv")
 # =========================
 print("\nSTEP 8: (Optional) Panel coverage check")
 
-# Only runs if you later load panel
+# Optional coverage check when an analysis panel is available.
 try:
     panel = pd.read_csv("panel_regression_ready.csv")
 

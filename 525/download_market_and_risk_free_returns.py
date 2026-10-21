@@ -1,3 +1,10 @@
+"""Download daily market and risk-free return inputs through WRDS.
+
+START_DATE and END_DATE select the sample. The output market_rf_daily.csv is
+used by the event-return and asset-beta workflows. Access requires an authorized
+WRDS account. Run from the 525 directory; the download executes on import.
+"""
+
 import time
 
 import pandas as pd

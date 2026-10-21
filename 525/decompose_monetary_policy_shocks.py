@@ -1,10 +1,18 @@
+"""Decompose rate and equity surprises into monetary-policy and information shocks.
+
+Read USMPD.csv with date_time, FF3, and SP500 columns. Search over orthogonal
+rotations subject to opposite-sign monetary-policy and same-sign information
+restrictions. The configured random seed controls the rotation search.
+Run from the 525 directory; the workflow executes on import and writes a CSV.
+"""
+
 import numpy as np
 import pandas as pd
 
 # ============================================================
 # SETTINGS
 # ============================================================
-INPUT_FILE = "USMPD.csv"   # change this
+INPUT_FILE = "USMPD.csv"   # Source surprise-data file.
 OUTPUT_FILE = "jk_shocks_ff3_sp500.csv"
 
 DATE_COL = "date_time"
@@ -12,7 +20,7 @@ RATE_COL = "FF3"
 STOCK_COL = "SP500"
 
 # Optional: demean the reduced-form surprises before covariance estimation
-# Usually sensible if you want covariance of zero-mean surprises
+# Demeaning estimates covariance from centered surprises.
 DEMEAN = True
 
 # Random rotation search
@@ -199,7 +207,7 @@ out[f"u_{STOCK_COL}"] = U[:, 1]
 out["eps_MP"] = EPS[:, 0]
 out["eps_INFO"] = EPS[:, 1]
 
-# You may also want the original undemeaned values
+# Retain the original undemeaned values for comparison.
 out[f"{RATE_COL}_raw"] = U_raw[:, 0]
 out[f"{STOCK_COL}_raw"] = U_raw[:, 1]
 

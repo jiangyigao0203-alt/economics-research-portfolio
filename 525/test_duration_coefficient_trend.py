@@ -1,3 +1,12 @@
+"""Summarize trends across estimated duration-bin shock coefficients.
+
+Read the selected panel coefficient table and fit an inverse-variance-weighted
+linear trend in bin number separately by shock type. Report two-sided and
+positive-slope one-sided p-values. This exploratory second-stage calculation
+does not use the full covariance matrix of first-stage coefficient estimates.
+Run from the 525 directory; estimation and CSV export occur on import.
+"""
+
 from pathlib import Path
 
 import pandas as pd
@@ -32,6 +41,10 @@ df = df[df["std_err"] > 0].copy()
 # FUNCTION: TEST INCREASING TREND
 # ============================================================
 def test_increasing_beta(subdf, shock_name):
+    """Fit a weighted coefficient-on-bin trend for one shock type.
+
+    Return the summary row and fitted WLS result. Weights use marginal first-stage
+    standard errors; cross-bin estimation covariance is not propagated."""
     subdf = subdf.sort_values("bin").copy()
 
     y = subdf["coef"].astype(float)

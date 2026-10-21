@@ -1,10 +1,18 @@
+"""Audit a prepared monthly equity-duration dataset.
+
+Inspect missing values, duplicate keys, accounting-date alignment, input ratios,
+and duration outliers. INPUT_FILE selects the dataset; outputs summarize issues
+and export flagged observation-level rows. Those generated rows remain local.
+Run from the 525 directory. The diagnostic workflow executes on import.
+"""
+
 import numpy as np
 import pandas as pd
 
 # =========================
 # SETTINGS
 # =========================
-INPUT_FILE = "Implied_Duration_g=0.4.csv"   # change to your file path
+INPUT_FILE = "Implied_Duration_g=0.4.csv"   # Duration dataset selected for this diagnostic run.
 OUTPUT_SUMMARY = "duration_diagnostic_summary.txt"
 OUTPUT_FLAGGED = "duration_flagged_rows.csv"
 

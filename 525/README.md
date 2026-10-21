@@ -6,17 +6,17 @@ This project studies heterogeneity in equity-return responses to monetary-policy
 
 | Files | Purpose |
 | --- | --- |
-| `getdatawrdsmonthly.py` | Download Compustat fundamentals and build a monthly panel from quarterly inputs |
-| `get_daily_price.py`, `market_data.py` | Obtain matched CRSP prices and market/risk-free returns through WRDS |
-| `Decomposition.py` | Separate monetary-policy and information shocks using sign-restricted rotations of rate and equity surprises |
-| `impliedduration.py` | Implied-duration calculation with configurable assumptions and outlier handling |
-| `diag.py` | Duration diagnostics |
-| `CAMP.py` | Estimate event-window abnormal returns using market-model inputs |
-| `risk_factor.py` | Estimate firm asset betas |
-| `panel.py` | Merge shocks, event returns, and lagged duration; estimate panel specifications and export diagnostics |
-| `increase_test.py` | Inspect duration-bin coefficient patterns |
+| `build_compustat_monthly_panel.py` | Download Compustat fundamentals and build a monthly panel from quarterly inputs |
+| `download_crsp_daily_prices.py`, `download_market_and_risk_free_returns.py` | Obtain matched CRSP prices and market/risk-free returns through WRDS |
+| `decompose_monetary_policy_shocks.py` | Separate monetary-policy and information shocks using sign-restricted rotations of rate and equity surprises |
+| `estimate_equity_duration.py` | Implied-duration calculation with configurable assumptions and outlier handling |
+| `diagnose_equity_duration.py` | Duration diagnostics |
+| `estimate_event_abnormal_returns.py` | Estimate event-window abnormal returns using market-model inputs |
+| `estimate_asset_market_betas.py` | Estimate firm asset betas |
+| `estimate_duration_shock_panel.py` | Merge shocks, event returns, and lagged duration; estimate panel specifications and export diagnostics |
+| `test_duration_coefficient_trend.py` | Inspect duration-bin coefficient patterns |
 
-Original filenames are retained. Earlier annual-data, alternate panel/duration, and ad hoc plotting/filtering scripts are omitted; see [the selection notes](../FILE_SELECTION.md).
+Source files have descriptive names and module/function documentation for readers unfamiliar with the original workspace. [Source provenance](../SOURCE_MANIFEST.md) maps the old filenames to the published names. Earlier annual-data, alternate panel/duration, and ad hoc plotting/filtering scripts are omitted; see [selection notes](../FILE_SELECTION.md).
 
 ## Selected saved outputs
 
@@ -27,11 +27,11 @@ The trend test is an exploratory regression on estimated bin coefficients. Its r
 ## Reproduction guide and current gaps
 
 1. Install the root requirements and change into `525`.
-2. Configure dates and firm selections in the WRDS collection scripts. Run `getdatawrdsmonthly.py` to create `compustat_monthly_panel_from_quarterly_2000_2024.csv`; then review `get_daily_price.py` and `market_data.py`.
-3. Obtain the shock inputs from their original source. `Decomposition.py` expects `USMPD.csv` with `date_time`, `FF3`, and `SP500`. Its output is `jk_shocks_ff3_sp500.csv`; downstream filenames differ and must be aligned deliberately.
-4. Review `impliedduration.py` and record its parameters. It currently writes `monthly_implied_duration_years.csv`, whereas `panel.py` expects `Implied_Duration_g=0.6.csv`. Do not infer the parameters of an old output from its filename alone.
-5. `CAMP.py` expects `shocks_fed_jk_t.csv` and writes `forecasted_returns_5day_after_fomc_updated.csv`. `panel.py` instead expects `shocks.csv` and `abnormal_return.csv`. Reconcile names, schemas, and event-window definitions before proceeding.
-6. Review and run `risk_factor.py`, then `panel.py` with consistent shock, duration, beta, and abnormal-return files. Outputs go to `panel_outputs_model_selectable`.
-7. Point `increase_test.py` to the chosen coefficient output; their current default paths differ from `panel.py`'s output folder.
+2. Configure dates and firm selections in the WRDS collection scripts. Run `build_compustat_monthly_panel.py` to create `compustat_monthly_panel_from_quarterly_2000_2024.csv`; then review `download_crsp_daily_prices.py` and `download_market_and_risk_free_returns.py`.
+3. Obtain the shock inputs from their original source. `decompose_monetary_policy_shocks.py` expects `USMPD.csv` with `date_time`, `FF3`, and `SP500`. Its output is `jk_shocks_ff3_sp500.csv`; downstream filenames differ and must be aligned deliberately.
+4. Review `estimate_equity_duration.py` and record its parameters. It currently writes `monthly_implied_duration_years.csv`, whereas `estimate_duration_shock_panel.py` expects `Implied_Duration_g=0.6.csv`. Do not infer the parameters of an old output from its filename alone.
+5. `estimate_event_abnormal_returns.py` expects `shocks_fed_jk_t.csv` and writes `forecasted_returns_5day_after_fomc_updated.csv`. `estimate_duration_shock_panel.py` instead expects `shocks.csv` and `abnormal_return.csv`. Reconcile names, schemas, and event-window definitions before proceeding.
+6. Review and run `estimate_asset_market_betas.py`, then `estimate_duration_shock_panel.py` with consistent shock, duration, beta, and abnormal-return files. Outputs go to `panel_outputs_model_selectable`.
+7. Point `test_duration_coefficient_trend.py` to the chosen coefficient output; its current default path differ from `estimate_duration_shock_panel.py`'s output folder.
 
 The saved aggregate tables in `results/` can be inspected without raw data. The full pipeline needs authorized inputs and configuration reconciliation; it has not been executed as part of packaging.

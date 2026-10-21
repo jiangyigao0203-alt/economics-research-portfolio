@@ -1,3 +1,13 @@
+"""Estimate implied equity duration from a monthly accounting/security panel.
+
+Project mean-reverting sales growth and return on equity, discount the implied
+cash flows, and combine finite-horizon and residual terminal-value duration.
+DEFAULT_PARAMS controls the economic assumptions. Optional June NYSE microcap
+classification uses an external breakpoint file; outlier rules are configurable.
+Inputs and outputs are relative to the 525 working directory. Results include
+duration estimates and diagnostics; the underlying firm-level data stay local.
+"""
+
 from pathlib import Path
 
 import numpy as np
@@ -44,7 +54,7 @@ APPLY_JUNE_NYSE_MICROCAP_EXCLUSION = False
 BREAKPOINT_DATE_COL = "date"
 BREAKPOINT_20TH_COL = "20th"
 
-# If your breakpoint file has values in a different scale than market_cap,
+# If breakpoint values use a different scale from market_cap,
 # multiply the breakpoint by this factor before comparing to market_cap.
 # Usually leave at 1.0 if both are in millions.
 BREAKPOINT_SCALE_MULTIPLIER = 1.0
@@ -65,6 +75,7 @@ def _safe_divide(a, b):
 
 
 def _apply_duration_outlier_rule(df, method="drop", lower_q=0.01, upper_q=0.99):
+    """Drop or winsorize nonmissing duration values using the specified sample quantiles."""
     if method is None:
         print("No duration outlier handling applied.")
         return df.copy(), np.nan, np.nan, 0
@@ -319,6 +330,7 @@ def load_panel(path):
 
 
 def prepare_panel(df):
+    """Prepare firm-month accounting inputs and lagged quantities for duration estimation."""
     out = df.copy()
 
     required_cols = [
@@ -428,6 +440,10 @@ def compute_implied_duration_row(
     g_bar=DEFAULT_PARAMS["g_bar"],
     T=DEFAULT_PARAMS["T"],
 ):
+    """Return duration components for one firm observation under the configured cash-flow assumptions.
+
+    P0 is market value; B values are book equity, E0 is earnings, and S values
+    are sales. Invalid economic inputs return an error status and missing duration."""
     valid, msg = _validate_inputs(P0, B_minus_1, B0, E0, S_minus_1, S0)
     if not valid:
         return {
@@ -521,6 +537,7 @@ def compute_implied_duration_row(
 
 
 def compute_duration_for_panel(df, params=None):
+    """Apply the row-level duration model to a prepared firm-month panel."""
     if params is None:
         params = DEFAULT_PARAMS.copy()
 

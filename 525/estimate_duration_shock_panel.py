@@ -1,3 +1,13 @@
+"""Estimate equity-return responses to shocks conditional on equity duration.
+
+Merge firm-event abnormal returns, event shocks, lagged monthly duration, and
+optional asset betas. MODEL_SPEC selects binned, beta-adjusted, continuous, or
+shock-only specifications. Fixed effects, transforms, and covariance options
+are configured below. Export estimates, diagnostics, and local analysis panels.
+Run from the 525 directory after reconciling the documented input filenames.
+This script performs estimation and writes outputs when imported.
+"""
+
 import time
 from pathlib import Path
 from typing import Any
@@ -125,6 +135,7 @@ def pick_first_existing(columns, candidates, label):
 
 
 def load_asset_beta_file(file_path, gvkey_col="gvkey"):
+    """Read firm identifiers and the first supported asset-beta column from a CSV."""
     beta_df = pd.read_csv(file_path)
 
     if gvkey_col not in beta_df.columns:
@@ -145,6 +156,7 @@ def load_asset_beta_file(file_path, gvkey_col="gvkey"):
 
 
 def winsorize_series(s, lower=0.01, upper=0.99):
+    """Clip a series at its lower and upper empirical quantiles."""
     lo = s.quantile(lower)
     hi = s.quantile(upper)
     return s.clip(lower=lo, upper=hi)
@@ -163,6 +175,7 @@ def series_stats(s, prefix):
 
 
 def transform_duration(s, mode):
+    """Apply the selected level, log, inverse-hyperbolic-sine, or standardized duration transform."""
     s = pd.to_numeric(s, errors="coerce")
     if mode == "level":
         return s
@@ -187,6 +200,7 @@ def duration_to_integer_bin(s):
 
 
 def assign_quantile_bins(s, n_quantiles):
+    """Assign duration quantile groups, allowing duplicate cutpoints to reduce the bin count."""
     x = pd.to_numeric(s, errors="coerce")
     valid = x.notna()
     out = pd.Series(pd.NA, index=x.index, dtype="Int64")
@@ -205,6 +219,7 @@ def assign_quantile_bins(s, n_quantiles):
 
 
 def two_way_demean(df, col, entity_col="gvkey", time_col="event_date", tol=1e-10, max_iter=200):
+    """Iteratively remove entity and time means until convergence or the iteration limit."""
     z = pd.to_numeric(df[col], errors="coerce").astype(float).copy()
     for _ in range(max_iter):
         z_old = z.copy()
@@ -217,11 +232,13 @@ def two_way_demean(df, col, entity_col="gvkey", time_col="event_date", tol=1e-10
 
 
 def one_way_demean(df, col, group_col):
+    """Remove group means from one column while retaining observation alignment."""
     z = pd.to_numeric(df[col], errors="coerce").astype(float).copy()
     return z - z.groupby(df[group_col]).transform("mean")
 
 
 def residualize_column(df, col, entity_col="gvkey", time_col="event_date"):
+    """Remove the configured fixed effects from one regression variable."""
     if INCLUDE_FIRM_FE and INCLUDE_EVENT_FE:
         return two_way_demean(
             df, col,
@@ -238,6 +255,7 @@ def residualize_column(df, col, entity_col="gvkey", time_col="event_date"):
 
 
 def residualize_panel(df, y_col, x_cols, entity_col="gvkey", time_col="event_date", log_func=None):
+    """Apply the configured fixed-effect transformation to the outcome and regressor columns."""
     if log_func:
         log_func("Residualizing dependent variable with respect to requested fixed effects.")
 
