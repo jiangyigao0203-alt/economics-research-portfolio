@@ -1,0 +1,63 @@
+{
+  "target": "is_bubble",
+  "threshold_summary": {
+    "threshold_model": "sigmoid(gamma0 + gamma1 * standardized_garch_vol_lag1)",
+    "threshold_gamma0": -1.9,
+    "threshold_gamma1": -0.19999999999999973,
+    "threshold_train_f1_objective": 0.2846789584752104,
+    "threshold_mean": 0.13149728444515368,
+    "threshold_min": 5.4542344155003365e-05,
+    "threshold_max": 0.1430482904701431
+  },
+  "train_metrics": {
+    "n_obs": 425104,
+    "positive_rate": 0.09916161692197674,
+    "roc_auc": 0.6971069881278825,
+    "accuracy": 0.5997167751891301,
+    "precision": 0.1729951769802992,
+    "recall": 0.8032452436304977,
+    "specificity": 0.5773129651390521,
+    "f1": 0.2846789584752104,
+    "tn": 221082,
+    "fp": 161868,
+    "fn": 8294,
+    "tp": 33860,
+    "threshold_model": "sigmoid(gamma0 + gamma1 * standardized_garch_vol_lag1)",
+    "threshold_gamma0": -1.9,
+    "threshold_gamma1": -0.19999999999999973,
+    "threshold_train_f1_objective": 0.2846789584752104,
+    "threshold_mean": 0.13149728444515368,
+    "threshold_min": 5.4542344155003365e-05,
+    "threshold_max": 0.1430482904701431
+  },
+  "test_metrics": {
+    "n_obs": 182269,
+    "positive_rate": 0.10729196956147233,
+    "roc_auc": 0.3829600214307949,
+    "accuracy": 0.5064273134762357,
+    "precision": 0.058039245226168504,
+    "recall": 0.23639803640826346,
+    "specificity": 0.5388813432239588,
+    "f1": 0.09319718977108932,
+    "tn": 87683,
+    "fp": 75030,
+    "fn": 14933,
+    "tp": 4623,
+    "threshold_model": "sigmoid(gamma0 + gamma1 * standardized_garch_vol_lag1)",
+    "threshold_gamma0": -1.9,
+    "threshold_gamma1": -0.19999999999999973,
+    "threshold_train_f1_objective": 0.2846789584752104,
+    "threshold_mean": 0.13149728444515368,
+    "threshold_min": 5.4542344155003365e-05,
+    "threshold_max": 0.1430482904701431
+  },
+  "scaler_stats": {
+    "garch_vol_lag1": {
+      "mean": 0.3600752681577319,
+      "std": 0.6393604592704257
+    }
+  },
+  "fit_converged": true,
+  "fit_iterations": 8,
+  "final_loglik": -125906.13659597521
+}

@@ -1,0 +1,9 @@
+{
+  "threshold_model": "sigmoid(gamma0 + gamma1 * standardized_garch_vol_lag1)",
+  "threshold_gamma0": -1.9,
+  "threshold_gamma1": -0.19999999999999973,
+  "threshold_train_f1_objective": 0.2846789584752104,
+  "threshold_mean": 0.13149728444515368,
+  "threshold_min": 5.4542344155003365e-05,
+  "threshold_max": 0.1430482904701431
+}

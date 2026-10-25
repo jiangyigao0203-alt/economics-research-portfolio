@@ -16,11 +16,6 @@
 *.pdf
 *.html
 # Explicitly reviewed aggregate output snapshots only.
-!525/results/panel_regression_coefficients.csv
-!525/results/panel_regression_model_stats.csv
-!525/results/panel_regression_sample_stats.csv
-!525/results/beta_monotonicity_test_results.csv
-!575/results/intensity_regression_coefficients.csv
 # Inputs, run folders, and environments.
 .venv/
 venv/
@@ -64,3 +59,28 @@ outputs/
 *.a
 *.so
 *.dylib
+
+# Published tables and figures.
+!equity-duration-and-monetary-policy-shocks/results/beta_monotonicity_test_results.csv
+!equity-duration-and-monetary-policy-shocks/results/panel_regression_coefficients.csv
+!equity-duration-and-monetary-policy-shocks/results/panel_regression_model_stats.csv
+!equity-duration-and-monetary-policy-shocks/results/panel_regression_sample_stats.csv
+!financial-bubbles-across-asset-markets/results/duration_regression_coefficients.csv
+!financial-bubbles-across-asset-markets/results/figures/bitcoin_bsadf_garch.png
+!financial-bubbles-across-asset-markets/results/figures/ethereum_bsadf_garch.png
+!financial-bubbles-across-asset-markets/results/figures/south_africa_bsadf_garch.png
+!financial-bubbles-across-asset-markets/results/figures/spy_bsadf_garch.png
+!financial-bubbles-across-asset-markets/results/figures/sweden_bsadf_garch.png
+!financial-bubbles-across-asset-markets/results/figures/vti_bsadf_garch.png
+!financial-bubbles-across-asset-markets/results/gsadf_crypto.csv
+!financial-bubbles-across-asset-markets/results/gsadf_etfs.csv
+!financial-bubbles-across-asset-markets/results/gsadf_exchange_rates.csv
+!financial-bubbles-across-asset-markets/results/gsadf_market_summary.csv
+!financial-bubbles-across-asset-markets/results/intensity_regression_coefficients.csv
+!financial-bubbles-across-asset-markets/results/noise_control_metrics.csv
+!financial-bubbles-across-asset-markets/results/sample_by_frequency.csv
+!financial-bubbles-across-asset-markets/results/sample_by_market_type.csv
+!financial-bubbles-across-asset-markets/results/series_holdout_50_runs.csv
+!financial-bubbles-across-asset-markets/results/series_holdout_summary.csv
+!financial-bubbles-across-asset-markets/results/time_holdout_coefficients.csv
+!financial-bubbles-across-asset-markets/results/time_holdout_fit_history.csv

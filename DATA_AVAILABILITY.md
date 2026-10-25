@@ -1,15 +1,15 @@
-# Data availability
+# Data Availability
 
-This repository shares source code and selected aggregate statistical outputs. It does not distribute raw or observation-level datasets.
+## Monetary-policy shocks and equity duration
 
-| Project | Required external inputs | Access / preparation |
-| --- | --- | --- |
-| 525 | Compustat fundamentals and security data; CRSP prices and market/risk-free returns | Use your own authorized WRDS access and review the download scripts |
-| 525 | Monetary-policy surprises / shock series; optional NYSE market-equity breakpoints | Obtain the original sources, establish citations and permissions, and match the required schemas |
-| 575 | Cryptocurrency, ETF, exchange-rate, and valuation series; derived BSADF files | Review acquisition scripts and source terms; some source files and derived folders are absent |
+We use Compustat accounting and security data, CRSP daily prices and linking information, and market/risk-free returns obtained through WRDS. Access requires the relevant institutional subscriptions. We do not redistribute the raw or firm-level WRDS extracts.
 
-Do not add WRDS credentials, `.pgpass`, `.env`, passwords, or access tokens. Raw inputs and generated panels remain local. The `.gitignore` permits only the explicitly selected result CSV files; adding a future dataset requires a deliberate change.
+The monetary-policy and information-shock construction uses FOMC rate and equity surprises following the sign-restriction approach of Jarociński and Karadi (2020). The source files' required fields and the accounting-based duration parameters are specified in the project scripts. The optional NYSE size filter uses Kenneth French Data Library breakpoints.
 
-Data-source URLs, scholarly references, and the exact configurations underlying historical outputs still need to be completed by the author. No license is assigned to third-party datasets by publishing this code.
+## Financial bubbles across asset markets
 
-The supplied C++ archive contributes source only. Raw price CSVs and simulation-output trees from that archive are not redistributed. See `575/cpp/README.md` for input layout and output schemas.
+The study uses cryptocurrency prices from CoinGecko, exchange-rate data from DataHub, and ETF prices from Yahoo Finance. The ETF universe follows ETF Database asset rankings. Coverage varies by series and extends to April 2026.
+
+We provide per-series GSADF test results, market-category summaries, duration and intensity regressions, classifier metrics, the 50 random-market-split runs, and representative BSADF/GARCH figures. Raw price histories and large observation-level feature/prediction files are not included.
+
+The C++ input schema is a dated positive-price CSV with date in column 1 and price in column 2. The Python analysis schema uses `date`, logged `price`, and `is_bubble`. Reproducing an analysis requires a consistent market universe, date coverage, lag specification, and calibration configuration.

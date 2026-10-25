@@ -1,31 +1,25 @@
-# Economics research portfolio
+# Research in Financial Economics
 
-Two research projects implemented in Python and C++ on empirical asset pricing and financial econometrics.
+I maintain code and empirical results for two coauthored studies of monetary-policy transmission and financial bubbles.
 
-| Project | Research focus | Methods in the code |
+| Research project | Authors | Contents |
 | --- | --- | --- |
-| [525: Equity duration and monetary-policy shocks](525/README.md) | How equity-return responses to monetary-policy and information shocks vary with implied equity duration | WRDS data preparation, cash-flow duration estimates, event returns, fixed-effects panel regressions, duration-bin interactions |
-| [575: Financial bubbles and volatility](575/README.md) | Detecting explosive price episodes and studying their relationship with volatility | C++ BSADF/GSADF simulation and calibration, GARCH estimation, episode regressions, logistic classification |
+| [High-Frequency Identification of Monetary Policy and Information Shocks Across Implied Equity Durations](equity-duration-and-monetary-policy-shocks/) | Yigao Jiang and Travis J. Kimball | Shock identification, equity-duration estimation, event returns, and panel regressions |
+| [Identifying Financial Bubbles Across Heterogeneous Asset Markets: Evidence from Cryptocurrencies, ETFs, and Exchange Rates](financial-bubbles-across-asset-markets/) | Yigao Jiang and Matthew Lam | GSADF/BSADF tests, Monte Carlo calibration, GARCH volatility, duration and intensity regressions, and logit prediction experiments |
 
-## Start here
+Each project includes a method guide and empirical result tables. The bubble study also includes representative identification figures, chronological-holdout metrics, and all 50 random-market-holdout runs.
 
-Each project README maps the scripts to their purpose and explains data requirements and known reproduction gaps. The `results/` folders contain selected aggregate outputs from existing local runs, not newly replicated estimates. They illustrate the work; they are not evidence that the current code reproduces every saved output.
+## Python environment
 
-Source filenames describe each task, and scripts document inputs, outputs, assumptions, and execution behavior. The [source map](SOURCE_MANIFEST.md) connects the original and published names. The [575 C++ guide](575/cpp/README.md) covers the larger simulations.
-
-## Environment
-
-Python 3.11 or later is required by scripts using `datetime.UTC`. From this repository:
+The Python scripts require Python 3.11 or later. From the repository root:
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-C++ simulation build instructions are provided separately in `575/cpp/README.md`. The Python dependency list was inferred from imports. Versions are not pinned, and installation and full empirical execution have not been validated. Run each script from its project folder after providing its inputs and reviewing its SETTINGS or CONFIG block. Some scripts perform downloads, estimation, file creation, or plotting immediately when run or imported.
+Run analysis scripts from their project directory after configuring their input paths. C++ build instructions are in the [bubble-test guide](financial-bubbles-across-asset-markets/cpp/).
 
-## Data and reproducibility
+## Data
 
-Raw data, firm-level panels, credentials, virtual environments, and large generated files are excluded. The collection scripts allow readers with the relevant data access to inspect the acquisition process. WRDS-based inputs require the reader's own authorized access. The origin and redistribution permissions of external inputs must be established before adding data.
-
-See [file selection](FILE_SELECTION.md), [data availability](DATA_AVAILABILITY.md), and [verification notes](VERIFICATION.md). This is a documented research-code snapshot with known manual configuration steps, rather than a one-command replication package.
+The repository distributes code, aggregate results, and selected figures. Raw WRDS/Compustat/CRSP data require authorized access and are not redistributed. External price and shock sources are described in [Data availability](DATA_AVAILABILITY.md).

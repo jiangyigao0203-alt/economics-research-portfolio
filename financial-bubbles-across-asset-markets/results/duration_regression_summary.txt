@@ -1,0 +1,27 @@
+                             OLS Regression Results                            
+===============================================================================
+Dep. Variable:     bubble_duration_obs   R-squared:                       0.008
+Model:                             OLS   Adj. R-squared:                  0.006
+Method:                  Least Squares   F-statistic:                     3.768
+Date:                 Sun, 12 Apr 2026   Prob (F-statistic):             0.0104
+Time:                         05:45:54   Log-Likelihood:                -9024.4
+No. Observations:                 1411   AIC:                         1.806e+04
+Df Residuals:                     1407   BIC:                         1.808e+04
+Df Model:                            3                                         
+Covariance Type:                   HC1                                         
+============================================================================================
+                               coef    std err          z      P>|z|      [0.025      0.975]
+--------------------------------------------------------------------------------------------
+const                       34.6338      4.055      8.542      0.000      26.687      42.581
+vol_right_before_bubble      1.1783      3.831      0.308      0.758      -6.330       8.687
+market_type_ExchangeRate    23.4309      9.069      2.584      0.010       5.656      41.206
+market_type_crypto          -6.5325      5.897     -1.108      0.268     -18.091       5.026
+==============================================================================
+Omnibus:                     2757.855   Durbin-Watson:                   1.963
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):          5723417.050
+Skew:                          14.725   Prob(JB):                         0.00
+Kurtosis:                     313.618   Cond. No.                         4.33
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC1)

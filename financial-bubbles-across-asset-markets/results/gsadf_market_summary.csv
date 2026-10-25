@@ -1,0 +1,4 @@
+market_type,n_series,reject_count,reject_rate,avg_gsadf
+Crypto,50,33,0.66,4.441558145455524
+ETFS,50,39,0.78,3.5124545299320675
+ExchangeRate,22,21,0.9545454545454546,7.948305862459629
