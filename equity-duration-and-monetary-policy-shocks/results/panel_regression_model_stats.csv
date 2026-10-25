@@ -1,0 +1,9 @@
+metric,value
+n_obs,965551
+df_model,42.0
+df_resid,965509.0
+rsquared_uncentered,0.0007951385347418904
+rsquared_adj_uncentered,0.0007516727522565159
+cov_type,HC1
+n_requested_regressors,42
+n_estimated_regressors,42
