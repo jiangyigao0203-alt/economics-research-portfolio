@@ -331,6 +331,8 @@ def report(df):
 # MAIN
 # =========================================================
 
+OUTPUT_CSV.parent.mkdir(parents=True, exist_ok=True)
+
 print("\nLoading data...")
 df, x_cols = load_data()
 

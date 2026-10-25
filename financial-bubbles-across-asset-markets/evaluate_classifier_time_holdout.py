@@ -352,6 +352,10 @@ def find_best_threshold(y, p, volatility_feature):
 # =========================================================
 
 def main():
+    # A clean checkout does not contain generated output directories.
+    for destination in [OUTPUT_CSV, OUTPUT_PLOT_ALL_TEST_PROBS, OUTPUT_PLOT_TEST_BY_CLASS, OUTPUT_PLOT_TEST_BOX]:
+        destination.parent.mkdir(parents=True, exist_ok=True)
+
     print("\nLoading data...")
     df, x_cols = load_data()
 
